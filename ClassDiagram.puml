@@ -1,0 +1,76 @@
+@startuml CatGame
+!define JComponent javax.swing.JComponent
+!define JPanel javax.swing.JPanel
+!define JFrame javax.swing.JFrame
+!define BufferedImage java.awt.image.BufferedImage
+!define ActionListener java.awt.event.ActionListener
+!define Color java.awt.Color
+
+class Game {
+    - BufferedImage scene1
+    - BufferedImage imgMask
+    - BufferedImage[] imgColor
+    - DrawArea draw
+
+    + Game()
+    - void loadImages()
+    - void showStartScreen()
+    - void startGame()
+    + static void main(String[] args)
+}
+
+class ImageLoader {
+    + static BufferedImage loadImage(String path)
+    + static BufferedImage[] loadImages(String[] paths)
+}
+
+class StartScreen extends JPanel {
+    + StartScreen(ActionListener startGameListener, ActionListener exitGameListener)
+    - JButton createStyledButton(String text)
+}
+
+class DrawArea extends JPanel {
+    - Image scene1
+    - BufferedImage imgMask
+    - BufferedImage[] imgColor
+    - ArrayList<Cat> cats
+    - int numCats
+    - JFrame parentFrame
+
+    + DrawArea(Image scene1, BufferedImage imgMask, BufferedImage[] imgColor, JFrame parentFrame)
+    - void setupMouseListener()
+    - void handleCatClick(int x, int y)
+    + void paintComponent(Graphics g)
+    - BufferedImage resizeImage(BufferedImage originalImage, int width, int height)
+    - void showEndScreen()
+}
+
+class Cat {
+    - BufferedImage imgCat
+    - boolean isCheck
+
+    + Cat(BufferedImage image)
+    + BufferedImage getImgCat()
+    + boolean isCheck()
+    + void setCheck(boolean isCheck)
+}
+
+class EndScreen extends JPanel {
+    + EndScreen(ActionListener exitListener)
+}
+
+Game -> DrawArea
+DrawArea *-- "many" Cat : cats
+DrawArea *-- "1" BufferedImage : scene1
+DrawArea *-- "1" BufferedImage : imgMask
+DrawArea *-- "many" BufferedImage : imgColor
+DrawArea --> "1" JFrame : parentFrame
+Game --> ImageLoader : loadImages()
+Game --> StartScreen : showStartScreen()
+StartScreen --> JButton : createStyledButton()
+EndScreen --> JButton : exitButton
+
+note right of Cat
+    Inner class within DrawArea
+end note
+@enduml
